@@ -2,55 +2,55 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h> 
+#include <ctype.h>
 
 #include "calc.tab.h"
 
 int yylex(void)
 {
-   static int tokens = 0;
-   
-   int token;
-   int yychar;
-   
-   //----------------------------------------------------------
-   // This code is junk placeholder code to give an initial
-   // lexer that will compile and run and do something.
-   
-   yychar = fgetc(yyin); // File assumed to be open and ready
-   if (EOF == yychar)
-   {
-      token = END;
-      yytext = (char *) malloc(11*sizeof(char));
-      sprintf(yytext, "%i", tokens);
-   }
-   else
-   {
-      token = BAD;
-      yytext = (char *) malloc(4*sizeof(char));
-      if (isgraph(yychar)&&('#' != yychar))
-         sprintf(yytext, "%c", yychar);
-      else
-         sprintf(yytext, "#%02X", (yychar&0xFF));
-   }
-   //----------------------------------------------------------
-   
-   return token;
+    static int tokens = 0;
+
+    int token;
+    int yychar;
+
+    //----------------------------------------------------------
+    // This code is junk placeholder code to give an initial
+    // lexer that will compile and run and do something.
+
+    yychar = fgetc(yyin); // File assumed to be open and ready
+    if (EOF == yychar)
+    {
+        token = END;
+        yytext = (char *) malloc(11*sizeof(char));
+        sprintf(yytext, "%i", tokens);
+    }
+    else
+    {
+        token = BAD;
+        yytext = (char *) malloc(4*sizeof(char));
+        if (isgraph(yychar)&&('#' != yychar))
+            sprintf(yytext, "%c", yychar);
+        else
+            sprintf(yytext, "#%02X", (yychar&0xFF));
+    }
+    //----------------------------------------------------------
+
+    return token;
 }
 
 int main(int argc, char *argv[])
 {
 
-   if (argc <= 1)
-   {
-      printf("USAGE: calc inputfilename\n");
-      exit(EXIT_FAILURE);
-   }
-   
-   yyparse(argv[1]);
-   
-   printf("Hit ENTER to exit.");
-   fgetc(stdin);
-   
-   return 0;
+    if (argc <= 1)
+    {
+        printf("USAGE: calc inputfilename\n");
+        exit(EXIT_FAILURE);
+    }
+
+    yyparse(argv[1]);
+
+    printf("Hit ENTER to exit.");
+    fgetc(stdin);
+
+    return 0;
 }

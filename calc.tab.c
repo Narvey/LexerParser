@@ -11,39 +11,38 @@ char *yytext = NULL;
 
 int ExportToken(FILE *yyout, int token, char *yytext)
 {
-    fprintf(yyout, "<%03i> %s\n", token, ((yytext)? yytext:""));
+    fprintf(yyout, "<%s> %s\n", lookUp(token), ((yytext)? yytext:""));
     if (yytext)
-       free(yytext);
+        free(yytext);
     yytext = NULL;
     return 0;
 }
 
 int yyparse(char const *filename)
 {
-   FILE *yyout;
-   int token;
-   
-   yyin = fopen(filename, "rt");
-   if (!yyin)
-   {
-      printf("File %s failed to open.\n", filename);
-      return -1;
-   }
+    FILE *yyout;
+    int token;
 
-   yyout = fopen(OUTPUTFILE, "wt");
-   if (!yyout)
-   {
-      printf("File %s failed to open.\n", OUTPUTFILE);
-      return -2;
-   }
+    yyin = fopen(filename, "rt");
+    if (!yyin)
+    {
+        printf("File %s failed to open.\n", filename);
+        return -1;
+    }
 
-   while (token=yylex())
-      ExportToken(yyout, token, yytext);
-   ExportToken(yyout, token, yytext);
-   
-   fclose(yyin);
-   fclose(yyout);
-   
-   return 0;
+    yyout = fopen(OUTPUTFILE, "wt");
+    if (!yyout)
+    {
+        printf("File %s failed to open.\n", OUTPUTFILE);
+        return -2;
+    }
+
+    while (token=yylex())
+        ExportToken(yyout, token, yytext);
+    ExportToken(yyout, token, yytext);
+
+    fclose(yyin);
+    fclose(yyout);
+
+    return 0;
 }
-

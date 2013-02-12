@@ -19,7 +19,7 @@
 #define BLKCMT  (271) // [First twenty characters with certain replacements]
 
 int yyparse(char const *filename);
+char* lookUp(int code);
 
 extern FILE *yyin;
 extern char *yytext;
-
