@@ -2,55 +2,115 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h> 
+#include <ctype.h>
 
 #include "calc.tab.h"
 
 int yylex(void)
 {
-   static int tokens = 0;
-   
-   int token;
-   int yychar;
-   
-   //----------------------------------------------------------
-   // This code is junk placeholder code to give an initial
-   // lexer that will compile and run and do something.
-   
-   yychar = fgetc(yyin); // File assumed to be open and ready
-   if (EOF == yychar)
-   {
-      token = END;
-      yytext = (char *) malloc(11*sizeof(char));
-      sprintf(yytext, "%i", tokens);
-   }
-   else
-   {
-      token = BAD;
-      yytext = (char *) malloc(4*sizeof(char));
-      if (isgraph(yychar)&&('#' != yychar))
-         sprintf(yytext, "%c", yychar);
-      else
-         sprintf(yytext, "#%02X", (yychar&0xFF));
-   }
-   //----------------------------------------------------------
-   
-   return token;
+    static int tokens = 0;
+    static int linenum = 1;
+
+    int token;
+    int yychar;
+
+    yychar = fgetc(yyin); // File assumed to be open and ready
+    switch(yychar)
+    {
+    case '\n':
+        token = NEWLINE;
+        yytext = (char *) malloc(11*sizeof(char));
+        sprintf(yytext, "%i", ++linenum);
+        break;
+    case EOF:
+        //from placeholder code
+        token = END;
+        yytext = (char *) malloc(11*sizeof(char));
+        sprintf(yytext, "%i", tokens);
+        //end placeholder code
+        break;
+    case 'R':
+        token = ID;
+        yytext = (char *) malloc(3*sizeof(char));//3 chars: R,number,null
+        yychar = fgetc(yyin);//look for the number
+        if('0'<=yychar && '9'>=yychar)
+        {
+            sprintf(yytext, "R%c", yychar);
+        }
+        else //if we didn't get a digit as expected
+        {
+            token = BAD;
+            sprintf(yytext, "R");//for this case, we know it was R.
+            ungetc(yychar,yyin);//put back that thing that wasn't a digit.
+        }
+        break;
+        case '/':
+        yychar = fgetc(yyin);
+        yytext = (char *) malloc(5*sizeof(char));/*arbitrarily picked 4
+        characters (+null).  We will expand if needed (see below).*/
+        switch(yychar)
+        {
+            case '/':
+            token = EOLCMT;
+            //////////////////////////////////////////////////////////////Handle this
+            break;
+            case '*':
+            token = BLKCMT;
+                        //////////////////////////////////////////////////////////////Handle this
+            yychar = fgetc (yyin);
+            if('\n'==yychar)++linenum;//put this in the loop
+            break;
+            default:
+            token = DIV;
+            sprintf(yytext, "/");//4 chars is more than enough here.
+            ungetc(yychar,yyin);//anything after the / starts the next token
+            break;
+        }
+    default:
+        token = BAD;/////////////////////////////////////////begin placeholder code/////////////////////////////////////////////////
+        yytext = (char *) malloc(4*sizeof(char));
+        if (isgraph(yychar)&&('#' != yychar))
+            sprintf(yytext, "%c", yychar);
+        else
+            sprintf(yytext, "#%02X", (yychar&0xFF));
+        //end placeholder code
+        break;
+    }
+    if(BAD>token)tokens++;//using the fact that all debug tokens are >BAD.
+    /* if (EOF == yychar)
+    {
+       token = END;
+       yytext = (char *) malloc(11*sizeof(char));
+       sprintf(yytext, "%i", tokens);
+    }
+    else
+    {
+       token = BAD;
+       yytext = (char *) malloc(4*sizeof(char));
+       if (isgraph(yychar)&&('#' != yychar))
+          sprintf(yytext, "%c", yychar);
+       else
+          sprintf(yytext, "#%02X", (yychar&0xFF));
+    }
+    */
+    //----------------------------------------------------------
+    return token;
 }
 
 int main(int argc, char *argv[])
 {
 
-   if (argc <= 1)
-   {
-      printf("USAGE: calc inputfilename\n");
-      exit(EXIT_FAILURE);
-   }
-   
-   yyparse(argv[1]);
-   
-   printf("Hit ENTER to exit.");
-   fgetc(stdin);
-   
-   return 0;
+    if (argc <= 1)
+    {
+        printf("USAGE: calc inputfilename\n");
+        fgetc(stdin);
+        exit(EXIT_FAILURE);
+    }
+
+    yyparse(argv[1]);
+
+    printf("Hit ENTER to exit.");
+    fgetc(stdin);
+
+    return 0;
 }

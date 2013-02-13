@@ -10,39 +10,79 @@ char *yytext = NULL;
 
 int ExportToken(FILE *yyout, int token)
 {
-    fprintf(yyout, "<%03i> %s\n", token, ((yytext)? yytext:""));
+    fprintf(yyout, "<%s> %s\n", lookUp(token), ((yytext)? yytext:""));
     if (yytext)
-       free(yytext);
+        free(yytext);
     yytext = NULL;
     return 0;
 }
 
 int yyparse(char const *filename)
 {
-   FILE *yyout;
-   int token;
+    FILE *yyout;
+    int token;
 
-   yyin = fopen(filename, "rt");
-   if (!yyin)
-   {
-      printf("File %s failed to open.\n", filename);
-      return -1;
-   }
+    yyin = fopen(filename, "rt");
+    if (!yyin)
+    {
+        printf("File %s failed to open.\n", filename);
+        return -1;
+    }
 
-   yyout = fopen(OUTPUTFILE, "wt");
-   if (!yyout)
-   {
-      printf("File %s failed to open.\n", OUTPUTFILE);
-      return -2;
-   }
+    yyout = fopen(OUTPUTFILE, "wt");
+    if (!yyout)
+    {
+        printf("File %s failed to open.\n", OUTPUTFILE);
+        return -2;
+    }
 
-   while (token=yylex())
-      ExportToken(yyout, token);
-   ExportToken(yyout, token);
+    while (token=yylex())
+        ExportToken(yyout, token);
+    ExportToken(yyout, token);
 
-   fclose(yyin);
-   fclose(yyout);
+    fclose(yyin);
+    fclose(yyout);
 
-   return 0;
+    return 0;
 }
 
+char* lookUp(int code)//method recommended by professor
+{
+    switch(code)
+    {
+    case END:
+        return "END";
+    case ID:
+        return "ID";
+    case INT:
+        return "INT";
+    case FLT:
+        return "FLT";
+    case OPAREN:
+        return "OPAREN";
+    case CPAREN:
+        return "CPAREN";
+    case ASSIGN:
+        return "ASSIGN";
+    case EXP:
+        return "EXP";
+    case MUL:
+        return "MUL";
+    case DIV:
+        return "DIV";
+    case ADD:
+        return "ADD";
+    case SUB:
+        return "SUB";
+    case SEMI:
+        return "SEMI";
+    case BAD:
+        return "BAD";
+    case NEWLINE:
+        return "NEWLINE";
+    case EOLCMT:
+        return "EOLCMT";
+    case BLKCMT:
+        return "BLKCMT";
+    }
+}
