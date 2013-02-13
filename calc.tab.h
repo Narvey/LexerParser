@@ -18,9 +18,12 @@
 #define EOLCMT  (270) // [First twenty characters with certain replacements]
 #define BLKCMT  (271) // [First twenty characters with certain replacements]
 
+#include <stdio.h>
+#include <stdlib.h>
 int yyparse(char const *filename);
 int yylex(void);
 char* lookUp(int code);
 
 extern FILE *yyin;
 extern char *yytext;
+
