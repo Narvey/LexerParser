@@ -6,10 +6,28 @@
 
 #include "calc.tab.h"
 
-void yyfloat(char next)
+void yyfloat(char cur)
 {
-    //put next into n after checking your state
+    if('E'==next)
+    {
+        //look for sign, then some numbers
+        yydigit();//go tell it isn't a numeral
+    }else //decimal point
+    {
+        //
+    }
+    //put next into yytext after checking your state
     //you can use yytext and yyin
+}
+
+void yydigit(char cur)
+{
+    while('0'<=next&&'9'>=next)
+    {
+        //save to yytext
+        //expand if necessary
+        //check next char
+    }
 }
 
 int yylex(void)
