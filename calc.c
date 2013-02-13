@@ -6,6 +6,12 @@
 
 #include "calc.tab.h"
 
+void yyfloat(char next)
+{
+    //put next into n after checking your state
+    //you can use yytext and yyin
+}
+
 int yylex(void)
 {
     static int tokens = 0;
@@ -23,7 +29,7 @@ int yylex(void)
         sprintf(yytext, "%i", ++linenum);
         break;
     case EOF:
-        //from placeholder code
+        //This is from the placeholder code
         token = END;
         yytext = (char *) malloc(11*sizeof(char));
         sprintf(yytext, "%i", tokens);
@@ -44,30 +50,41 @@ int yylex(void)
             ungetc(yychar,yyin);//put back that thing that wasn't a digit.
         }
         break;
-        case '/':
+    case '/':
         yychar = fgetc(yyin);
         yytext = (char *) malloc(5*sizeof(char));/*arbitrarily picked 4
         characters (+null).  We will expand if needed (see below).*/
         switch(yychar)
         {
-            case '/':
+        case '/':
             token = EOLCMT;
             //////////////////////////////////////////////////////////////Handle this
             break;
-            case '*':
+        case '*':
             token = BLKCMT;
-                        //////////////////////////////////////////////////////////////Handle this
+            //////////////////////////////////////////////////////////////Handle this
             yychar = fgetc (yyin);
             if('\n'==yychar)++linenum;//put this in the loop
             break;
-            default:
+        default:
             token = DIV;
             sprintf(yytext, "/");//4 chars is more than enough here.
             ungetc(yychar,yyin);//anything after the / starts the next token
             break;
         }
-    default:
-        token = BAD;/////////////////////////////////////////begin placeholder code/////////////////////////////////////////////////
+        break;
+    default://INT, FLT, or bad
+        if('0'<=yychar && '9'>=yychar)
+        {
+            token = INT;//it isn't a float until we see . or E
+            /////////////////////////////////////////////IF IT IS A FLOAT
+            token = FLT;
+            yyfloat(yychar);
+            //valid digit
+            break;
+        }
+        //begin placeholder code
+        token = BAD;
         yytext = (char *) malloc(4*sizeof(char));
         if (isgraph(yychar)&&('#' != yychar))
             sprintf(yytext, "%c", yychar);
