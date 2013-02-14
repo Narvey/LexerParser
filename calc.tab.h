@@ -17,6 +17,7 @@
 #define NEWLINE (269) // [source code line number]
 #define EOLCMT  (270) // [First twenty characters with certain replacements]
 #define BLKCMT  (271) // [First twenty characters with certain replacements]
+#define SPACE  (272) // Need this so you don't pass garbage values
 
 #include <stdio.h>
 #include <stdlib.h>

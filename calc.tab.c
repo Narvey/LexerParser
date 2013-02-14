@@ -84,5 +84,7 @@ char* lookUp(int code)//method recommended by professor
         return "EOLCMT";
     case BLKCMT:
         return "BLKCMT";
+    case SPACE:
+        return "SPACE";
     }
 }
