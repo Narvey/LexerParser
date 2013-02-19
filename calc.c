@@ -22,7 +22,7 @@ void expand(void)
     free(yytext);//don't leak memory
     yytext = temp;//and finally point at the new, bigger string!
     temp = NULL;
-}
+}// INSTEAD OF THIS, do yysize*=2; yytext = realloc(yytext, yysize);
 
 //precondition: cur must be a digit '0'-'9', yytext allocated.
 //postcondition: next char on yyin is not a digit.
